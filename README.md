@@ -33,7 +33,7 @@ Either form runs `npm install` for you and adds the source to
 `npm install`; run once per machine:
 
 ```bash
-npx playwright install chromium
+npx playwright@1.61.1 install chromium
 ```
 (from this repo's directory, or wherever `pi` cloned/installed it — see
 `pi list` to find the install path).
