@@ -1,0 +1,16 @@
+{
+	"name": "linm1-pi-extensions",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"keywords": ["pi-package"],
+	"pi": {
+		"extensions": ["extensions/*/src/index.ts"]
+	},
+	"dependencies": {
+		"playwright": "^1.61.1"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*"
+	}
+}
