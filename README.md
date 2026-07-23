@@ -22,16 +22,10 @@ npm dependency, add it to the root `package.json`'s `dependencies` (one
 
 ## Install
 
-Local path (no remote needed):
+install from a git remote, switch to:
 
 ```bash
-pi install /c/Users/LinM1/pi-extensions
-```
-
-Once pushed to a git remote, switch to:
-
-```bash
-pi install git:github.com/<user>/pi-extensions
+pi install git:github.com/linm1/pi-extensions
 ```
 
 Either form runs `npm install` for you and adds the source to
@@ -45,8 +39,7 @@ npx playwright install chromium
 `pi list` to find the install path).
 
 `pi update --extensions` reconciles a git-installed copy to this repo's
-latest commit on its pinned ref; `pi remove /c/Users/LinM1/pi-extensions` (or
-the git source once switched) uninstalls it.
+latest commit on its pinned ref;
 
 ## Extensions
 
