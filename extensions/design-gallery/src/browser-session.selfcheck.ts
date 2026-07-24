@@ -48,6 +48,9 @@ function fakePage(initialUrl: string) {
 		openPopup(popupPage: unknown) {
 			page.emit("popup", popupPage);
 		},
+		close() {
+			page.emit("close");
+		},
 	};
 	return page;
 }
@@ -170,7 +173,30 @@ async function main(): Promise<void> {
 		if (sawThird) throw new Error("reject-flow: accepted slug re-matched instead of staying suppressed");
 	}
 
-	console.log("browser-session self-check OK (6 cases)");
+	// 7. Closing one window must not end the session while another remains;
+	// closing the final window must unblock the selection wait with null.
+	{
+		const session = new GallerySession() as any;
+		session.knownSlugs = knownSlugs;
+		session.hasOpened = true;
+		const main = fakePage("https://getdesign.md/");
+		const popup = fakePage("about:blank");
+		session.attachSelectionObserver(main);
+		session.attachPopupWatcher(main);
+		main.openPopup(popup);
+		const pending = session.waitForSelection();
+		main.close();
+		let endedTooSoon = false;
+		await Promise.race([
+			pending.then(() => { endedTooSoon = true; }),
+			new Promise((resolve) => setTimeout(resolve, 20)),
+		]);
+		if (endedTooSoon) throw new Error("page-close: closing one window ended an active popup session");
+		popup.close();
+		await assertResolvesTo(pending, null, "page-close-final-window-ends-session");
+	}
+
+	console.log("browser-session self-check OK (7 cases)");
 }
 
 main().catch((err) => {

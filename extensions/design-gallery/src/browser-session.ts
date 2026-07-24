@@ -23,6 +23,7 @@ export class GallerySession {
 	/** Slugs the consumer accepted; kept suppressed for the rest of the session. */
 	private acceptedSlugs = new Set<string>();
 	private pendingMatches: string[] = [];
+	private observedPages = new Set<Page>();
 	private waiters: Array<(slug: string | null) => void> = [];
 	private ended = false;
 	private hasOpened = false;
@@ -42,6 +43,7 @@ export class GallerySession {
 
 		const context = await browser.newContext();
 		this.context = context;
+		context.on("close", () => this.handleEnded());
 		context.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
 		context.setDefaultTimeout(NAV_TIMEOUT_MS);
 
@@ -63,6 +65,12 @@ export class GallerySession {
 	}
 
 	private attachSelectionObserver(page: Page): void {
+		if (this.observedPages.has(page)) return;
+		this.observedPages.add(page);
+		page.on("close", () => {
+			this.observedPages.delete(page);
+			if (this.observedPages.size === 0) this.handleEnded();
+		});
 		page.on("framenavigated", (frame: Frame) => {
 			if (frame !== page.mainFrame()) return;
 			const slug = isAllowedGetdesignUrl(frame.url(), this.knownSlugs);
@@ -100,6 +108,7 @@ export class GallerySession {
 	private handleEnded(): void {
 		if (this.ended) return;
 		this.ended = true;
+		this.pendingMatches = [];
 		while (this.waiters.length > 0) {
 			this.waiters.shift()?.(null);
 		}
@@ -114,9 +123,9 @@ export class GallerySession {
 	 */
 	waitForSelection(): Promise<string | null> {
 		if (!this.hasOpened) throw new Error("Gallery session is not open");
+		if (this.ended) return Promise.resolve(null);
 		const queued = this.pendingMatches.shift();
 		if (queued !== undefined) return Promise.resolve(queued);
-		if (this.ended) return Promise.resolve(null);
 		return new Promise((resolve) => {
 			this.waiters.push(resolve);
 		});
