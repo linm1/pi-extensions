@@ -5,6 +5,8 @@ dedicated, disposable Chromium session, confirm a selection, and hand a
 commit-pinned `DESIGN.md` off to this Pi agent. Design decisions and evidence
 are recorded in `.wayfinder/`; this is the implementation.
 
+![design-gallery workflow](assets/design-gallery-workflow.png)
+
 ## Setup (once per machine)
 
 ```bash
