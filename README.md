@@ -45,4 +45,4 @@ latest commit on its pinned ref;
 
 | Extension | Commands | Purpose |
 | --- | --- | --- |
-| [design-gallery](extensions/design-gallery/README.md) | `/design-gallery`, `/app-design` | Browse the VoltAgent/awesome-design-md catalog via getdesign.md, pin a commit-exact `DESIGN.md`, hand it to the current agent |
+| [design-gallery](extensions/design-gallery/README.md) | `/design-gallery`, `/app-design` | Pin a commit-exact `DESIGN.md`, rank 20 bundled HTML structures for each request, and hand the selected combination to the current agent |
